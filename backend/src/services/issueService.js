@@ -1,4 +1,4 @@
-import prisma from "../config/db";
+import prisma from "../config/db.js";
 
 export const issueBook = async (studentId, bookId) => {
   return await prisma.$transaction(async (tx) => {
@@ -16,29 +16,29 @@ export const issueBook = async (studentId, bookId) => {
   });
 };
 
-export const returnBook = async(issueId)=>{
+export const returnBook = async (issueId) => {
   return await prisma.$transaction(async (tx) => {
     const issue = await tx.issue.findUnique({ where: { id: issueId } });
-    if (!issue || issue.isReturned) throw new Error('Invalid issue record')
+    if (!issue || issue.isReturned) throw new Error("Invalid issue record");
 
     await tx.book.update({
-      where: { id: issue.bookId };
-      data: { qunatity: { increment: 1 } }
+      where: { id: issue.bookId },
+      data: { qunatity: { increment: 1 } },
     });
 
     return await tx.issue.update({
       where: { id: issueId },
-      data: { isReturned: true, returnDate: new Date() }
+      data: { isReturned: true, returnDate: new Date() },
     });
   });
-}
+};
 
 export const getAllIssues = async () => {
   return prisma.issue.findMany({
     include: {
       student: true,
-      book: true
+      book: true,
     },
-    orderBy: { issueDate: 'desc' }
+    orderBy: { issueDate: "desc" },
   });
-}
+};

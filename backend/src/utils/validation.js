@@ -8,6 +8,14 @@ export const validateStudent = (data) => {
   });
   return schema.validate(data);
 };
+export const validateStudentUpdate = (data) => {
+  const schema = Joi.object({
+    name: Joi.string().min(2),
+    email: Joi.string().email(),
+    department: Joi.string(),
+  }).min(1);
+  return schema.validate(data);
+};
 
 export const validateBook = (data) => {
   const schema = Joi.object({
@@ -17,4 +25,14 @@ export const validateBook = (data) => {
     quantity: Joi.number().integer().min(0).required(),
   });
   return schema.validate(data);
+};
+
+export const validateBookUpdate = (data) => {
+  const schema = Joi.object({
+    title: Joi.string(),
+    author: Joi.string(),
+    isbn: Joi.string(),
+    quantity: Joi.number().integer().min(0),
+  }).min(1);
+  return schema.validate(data, { stripUnknown: true });
 };

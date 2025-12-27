@@ -1,31 +1,34 @@
-import { PrismaClient } from "@prisma/client";
-
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function main(){
+async function main() {
+  console.log('Seeding database...');
+
   await prisma.student.createMany({
-    data:[
-      {name:"Sahil Shrestha",email:"sahiltuchhe123@gmail.com", department:'CS'},
-      {name:"Jane Smith", email:"janesmith@example.com", department:'CS'}
+    data: [
+      { name: 'John Doe', email: 'john@example.com', department: 'CS' },
+      { name: 'Jane Smith', email: 'jane@example.com', department: 'Math' },
     ],
     skipDuplicates: true
-  })
-}
+  });
 
-await prisma.book.createMany({
-  data:[
-    {title:"The Great Gatsby", author:"F. Scott Fitzgerald", isbn:"9780743273565"},
-    {title:"To Kill a Mockingbird", author:"Harper Lee", isbn:"9780061120084"}
-  ],
-  skipDuplicates: true
-})
+  await prisma.book.createMany({
+    data: [
+      { title: 'Clean Code', author: 'Robert Martin', isbn: '11111', quantity: 5 },
+      { title: 'The Pragmatic Programmer', author: 'Andrew Hunt', isbn: '22222', quantity: 3 },
+    ],
+    skipDuplicates: true
+  });
 
-
-
-console.log('Seeding completed');
+  console.log('Seeding completed successfully');
 }
 
 main()
-.catch((e) => console.error(e))
-.finally(async () => await prisma.$disconnect());
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

@@ -10,15 +10,27 @@ export const getStudents = async (req, res) => {
   }
 };
 
+export const getStudent = async (req, res) => {
+  try {
+    const student = await studentService.getStudentById(req.params.id);
+    if (!student) return res.status(404).json({ error: "Student not found" });
+    res.json(student);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const createStudent = async (req, res) => {
-  const { error } = validateStudent(req.body);
-  if (error) return res.status(400).json({ error: error.dates[0].message });
+  const { error: validationError } = validateStudent(req.body);
+  if (validationError)
+    return res.status(400).json({ error: validationError.details[0].message });
 
   try {
     const student = await studentService.createStudent(req.body);
     res.status(201).json(student);
-  } catch (err) {}
-  res.status(500).json({ error: err.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 export const updateStudent = async (req, res) => {
@@ -26,18 +38,15 @@ export const updateStudent = async (req, res) => {
     const student = await studentService.updateStudent(req.params.id, req.body);
     res.json(student);
   } catch (err) {
-    res.send(500).json({ error: err.message });
-  }
-};
-
-export const deleteStudent = async (req, res) => {
-  try{
-    await studentService.deleteStudent(req.params.id);
-    res.json({
-      message:"Student deleted successfully"
-    })
-  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+export const deleteStudent = async (req, res) => {
+  try {
+    await studentService.deleteStudent(req.params.id);
+    res.json({ message: "Student deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
